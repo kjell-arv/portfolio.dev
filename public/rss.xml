@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kjell Arved Brandt — News</title>
+    <link>https://kjell-arved-brandt.de/</link>
+    <description>Competitions, camps, and updates.</description>
+    <language>en</language>
+    <atom:link href="https://kjell-arved-brandt.de/rss.xml" rel="self" type="application/rss+xml"/>
+    
+    <item>
+      <title>Junior Worldchamps</title>
+      <link>https://kjell-arved-brandt.de/news/seed-jwc</link>
+      <guid isPermaLink="true">https://kjell-arved-brandt.de/news/seed-jwc</guid>
+      <pubDate>Thu, 09 Apr 2026 15:53:27 GMT</pubDate>
+      <description>… it was a pretty good race, …</description>
+    </item>
+    <item>
+      <title>Junior European Cup</title>
+      <link>https://kjell-arved-brandt.de/news/seed-jec</link>
+      <guid isPermaLink="true">https://kjell-arved-brandt.de/news/seed-jec</guid>
+      <pubDate>Thu, 09 Apr 2026 15:53:27 GMT</pubDate>
+      <description>Race recap coming soon.</description>
+    </item>
+    <item>
+      <title>Junior Europechamps</title>
+      <link>https://kjell-arved-brandt.de/news/seed-jem</link>
+      <guid isPermaLink="true">https://kjell-arved-brandt.de/news/seed-jem</guid>
+      <pubDate>Thu, 09 Apr 2026 15:53:27 GMT</pubDate>
+      <description>More soon.</description>
+    </item>
+    <item>
+      <title>Training camp</title>
+      <link>https://kjell-arved-brandt.de/news/seed-camp</link>
+      <guid isPermaLink="true">https://kjell-arved-brandt.de/news/seed-camp</guid>
+      <pubDate>Thu, 09 Apr 2026 15:53:27 GMT</pubDate>
+      <description>Two weeks with the national team — solid testing, big training blocks, and a few stories from the island.</description>
+    </item>
+    <item>
+      <title>Junior European Cup</title>
+      <link>https://kjell-arved-brandt.de/news/seed-story-jec</link>
+      <guid isPermaLink="true">https://kjell-arved-brandt.de/news/seed-story-jec</guid>
+      <pubDate>Thu, 09 Apr 2026 15:53:27 GMT</pubDate>
+      <description>Race recap coming soon.</description>
+    </item>
+    <item>
+      <title>Junior Europechamps</title>
+      <link>https://kjell-arved-brandt.de/news/seed-story-jem</link>
+      <guid isPermaLink="true">https://kjell-arved-brandt.de/news/seed-story-jem</guid>
+      <pubDate>Thu, 09 Apr 2026 15:53:27 GMT</pubDate>
+      <description>More soon.</description>
+    </item>
+  </channel>
+</rss>

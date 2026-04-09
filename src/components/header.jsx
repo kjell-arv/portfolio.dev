@@ -1,142 +1,221 @@
-import React, { useState, useEffect } from 'react';
-import './header.css';
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import './header.css'
+import { isAuthenticated, needsPasswordSetup } from '../lib/auth'
+import { useI18n } from '../i18n/I18nContext.jsx'
+import LanguageSwitcher from './LanguageSwitcher.jsx'
+
+const navLinkClass =
+  'font-display text-sm font-semibold text-ink/90 transition-colors hover:text-amber-800 md:text-[0.95rem]'
 
 export default function Header() {
-  const [showTopics, setShowTopics] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
+  const { t } = useI18n()
+  const [showMenu, setShowMenu] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(isAuthenticated())
 
-  const toggleTopics = () => {
-    setShowTopics(prev => !prev);
-  };
+  const ownerHref = loggedIn ? '/dashboard' : needsPasswordSetup() ? '/setup' : '/login'
+  const ownerLabel = loggedIn
+    ? t('header.dashboard')
+    : needsPasswordSetup()
+      ? t('header.setup')
+      : t('header.login')
 
   const toggleMenu = () => {
-    setShowMenu((prev) => {
-      if (prev) {
-        setShowTopics(false); // Close topics if the menu is being closed
-      }
-      return !prev; // Toggle the menu state
-    });
-  };
-  function setMenuHeight() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    setShowMenu((prev) => !prev)
   }
 
-  // Initial call
-  setMenuHeight();
-
-  // Recalculate on resize and orientation change
-  window.addEventListener('resize', setMenuHeight);
-  window.addEventListener('orientationchange', setMenuHeight);
-
-
+  useEffect(() => {
+    const setMenuHeight = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+    setMenuHeight()
+    window.addEventListener('resize', setMenuHeight)
+    window.addEventListener('orientationchange', setMenuHeight)
+    return () => {
+      window.removeEventListener('resize', setMenuHeight)
+      window.removeEventListener('orientationchange', setMenuHeight)
+    }
+  }, [])
 
   useEffect(() => {
-    if (showTopics || showMenu) {
-      document.body.style.overflow = "hidden"; // Disable scrolling
+    if (showMenu) {
+      document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = ""; // Re-enable scrolling
+      document.body.style.overflow = ''
     }
-
     return () => {
-      document.body.style.overflow = ""; // Cleanup on unmount
-    };
-  }, [showTopics, showMenu]);
-
-  const handleTopicSelection = (topic) => {
-    const email = 'kab.request@gmail.com';
-    const subject = encodeURIComponent(`${topic}`);
-    let body = '';
-
-    if (topic === 'Other') {
-      body = encodeURIComponent('Hey, please choose your topic and fill out the subject line, thanks!');
-    } else {
-      body = encodeURIComponent('');
+      document.body.style.overflow = ''
     }
+  }, [showMenu])
 
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-  };
+  useEffect(() => {
+    const syncAuth = () => setLoggedIn(isAuthenticated())
+    window.addEventListener('portfolio-auth-changed', syncAuth)
+    window.addEventListener('storage', syncAuth)
+    return () => {
+      window.removeEventListener('portfolio-auth-changed', syncAuth)
+      window.removeEventListener('storage', syncAuth)
+    }
+  }, [])
 
-  const handleClick = () => {
-    setIsClicked(prev => !prev); // Toggle color and state
-    document.getElementById('contactMe').style.color = isClicked ? 'black' : 'rgb(255, 132, 0)';
-
-    // Toggle showTopics visibility when contactMe is clicked
-    toggleTopics();
-  };
+  const closeMenu = () => {
+    setShowMenu(false)
+  }
 
   return (
-    <>
-      <section className='headersec flex center justify-center h-12 w-screen fixed bg-gray-100 z-50'>
-        <div className='headerdiv animated-border border-r-2 border-l-2 border-neutral-200 w-10/12 font-bold'>
-          <div className='div1'>
-            <div className='namediv h-full flex justify-center'>
-              <h1 className='contacth1 text-3xl font-extrabold font-sans select-none'>
-                KAB
-              </h1>
-              <div className={`menutoggle ${showMenu ? "active" : ""}`} onClick={toggleMenu}>
-                <svg className="burger-icon" width="30" height="30" viewBox="0 0 100 80">
-                  <rect className="line top" width="100" height="15" rx="10"></rect>
-                  <rect className="line middle" y="30" width="100" height="15" rx="10"></rect>
-                  <rect className="line bottom" y="60" width="100" height="15" rx="10"></rect>
-                </svg>
-              </div>
-            </div>
-            {showMenu && (
-              <div className={`responsivediv ${showTopics ? "topics-active" : ""}`}>
-                <ul className='menu flex flex-col gap-9 pl-12 pt-8 mb-8'>
-                  <ul className='flex flex-col gap-6 '>
-                    <h2 className=' text-3xl'>Navitgation</h2>
-                    <li><a href="#" className='hover:text-neutral-500 select-none text-xl ml-8'>Home</a></li>
-                    <li><a href="#" className='hover:text-neutral-500 select-none text-xl ml-8'>About Me</a></li>
-                    <li><a href="#" className='hover:text-neutral-500 select-none text-xl ml-8'>News & Blog</a></li>
-                    <li><a href="#" className='hover:text-neutral-500 select-none text-xl ml-8'>Upcoming Events</a></li>
-                  </ul>
-                  <ul className='flex flex-col gap-6 '>
-                    <h2 className=' text-3xl'>Community</h2>
-                    <li><a href="#" className='hover:text-neutral-500 select-none text-xl ml-8'>Partners</a></li>
-                    <li><a href="" className='hover:text-neutral-500 select-none text-xl ml-8'>Subscribe to my newsletter</a></li>
-                  </ul>
-                  <ul className='flex flex-col '>
-                    <h2 className=' text-3xl mb-6'>Contact</h2>
-                    <li className='mb-6'><a href="#" className=' hover:text-neutral-500 select-none text-xl ml-8'>Social Media</a></li>
-                    <li className='mb-3'><a id='contactMe' onClick={handleClick} className=' hover:text-neutral-500 select-none text-xl ml-8 cursor-pointer'>Contact Me</a></li>
-                    <li>
-                      {showTopics && (
-                        <div className='topic-selection-div flex flex-col'>
-                          <div className='flex justify-between mb-6 mt-2'>
-                            <p>Select a topic:</p>
-                          </div>
-
-                          <ul className=' pl-6'>
-                            <li onClick={() => handleTopicSelection('General Inquiry')}>General Inquiry</li>
-                            <li onClick={() => handleTopicSelection('Sponsorship Questions')}>Sponsorship Questions</li>
-                            <li onClick={() => handleTopicSelection('Feedback')}>Feedback</li>
-                            <li onClick={() => handleTopicSelection('Other')}>Other</li>
-                          </ul>
-                        </div>
-                      )}
-                    </li>
-                  </ul>
-                </ul>
-              </div>
-            )}
-
-            <ul className='ulist flex w-4/12 justify-evenly'>
-              <li><a href="#" className='hover:text-neutral-500 select-none text-xl'>About Me</a></li>
-              <li><a href="#" className='hover:text-neutral-500 select-none text-xl'>News</a></li>
-              <li><a href="#" className='hover:text-neutral-500 select-none text-xl'>Upcoming Events</a></li>
-              <li><a href="#" className='hover:text-neutral-500 select-none text-xl'>Partners</a></li>
-            </ul>
-            <div className='subbuttondiv'>
-              <button className='text-xl font-extrabold subscribe-button'>Subscribe</button>
+    <header className="headersec flex center justify-center w-screen fixed top-0 left-0 z-50 border-b border-neutral-200/80 bg-gray-100/85 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-gray-100/75">
+      <div className="headerdiv mx-auto w-full max-w-6xl px-4 font-bold sm:px-6 lg:px-8">
+        <div className="div1 flex items-center justify-between gap-4">
+          <div className="namediv h-full flex items-center">
+            <Link
+              to="/"
+              className="contacth1 font-display text-xl font-bold tracking-tight text-ink select-none md:text-2xl"
+              onClick={closeMenu}
+            >
+              KAB
+            </Link>
+            <div
+              className={`menutoggle ${showMenu ? 'active' : ''}`}
+              onClick={toggleMenu}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') toggleMenu()
+              }}
+              aria-label={t('header.openMenu')}
+            >
+              <svg className="burger-icon" width="30" height="30" viewBox="0 0 100 80" aria-hidden>
+                <rect className="line top" width="100" height="15" rx="10"></rect>
+                <rect className="line middle" y="30" width="100" height="15" rx="10"></rect>
+                <rect className="line bottom" y="60" width="100" height="15" rx="10"></rect>
+              </svg>
             </div>
           </div>
-          {/* Conditionally render the topic selection div */}
-        </div>
-      </section>
-    </>
-  );
-}
+          {showMenu && (
+            <div className="responsivediv">
+              <nav className="menu flex flex-col gap-6 pl-12 pt-8 mb-8" aria-label={t('header.menu')}>
+                <ul className="flex flex-col gap-6">
+                  <li>
+                    <h2 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-ink-soft">
+                      {t('header.menu')}
+                    </h2>
+                  </li>
+                  <li className="ml-8">
+                    <LanguageSwitcher />
+                  </li>
+                  <li>
+                    <Link to="/" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.home')}
+                    </Link>
+                  </li>
+                  <li>
+                    <a href="/#about" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.aboutMe')}
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/#training" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.training')}
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/#news" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.news')}
+                    </a>
+                  </li>
+                  <li>
+                    <Link to="/about-me" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.achievements')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/sponsors" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.sponsorCta')}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/connect" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('connectPage.title')}
+                    </Link>
+                  </li>
+                  <li>
+                    <a href="/#newsletter" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {t('header.newsletter')}
+                    </a>
+                  </li>
+                  <li>
+                    {loggedIn && (
+                      <Link to="/profile" className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                        {t('header.profile')}
+                      </Link>
+                    )}
+                  </li>
+                  <li>
+                    <Link to={ownerHref} className={`${navLinkClass} ml-8`} onClick={closeMenu}>
+                      {ownerLabel}
+                    </Link>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          )}
 
+          <ul className="ulist hidden lg:flex items-center gap-6 xl:gap-8">
+            <li>
+              <a href="/#about" className={navLinkClass}>
+                {t('header.about')}
+              </a>
+            </li>
+            <li>
+              <a href="/#training" className={navLinkClass}>
+                {t('header.training')}
+              </a>
+            </li>
+            <li>
+              <a href="/#news" className={navLinkClass}>
+                {t('header.news')}
+              </a>
+            </li>
+            <li>
+              <Link to="/about-me" className={navLinkClass}>
+                {t('header.achievements')}
+              </Link>
+            </li>
+            <li>
+              <Link to="/sponsors" className={navLinkClass}>
+                {t('header.sponsorCta')}
+              </Link>
+            </li>
+            <li>
+              <Link to="/connect" className={navLinkClass}>
+                {t('connectPage.title')}
+              </Link>
+            </li>
+            {loggedIn && (
+              <li>
+                <Link to="/profile" className={navLinkClass}>
+                  {t('header.profile')}
+                </Link>
+              </li>
+            )}
+            <li>
+              <Link to={ownerHref} className={navLinkClass}>
+                {ownerLabel}
+              </Link>
+            </li>
+          </ul>
+          <div className="subbuttondiv flex flex-wrap items-center justify-end gap-2">
+            <LanguageSwitcher />
+            <a
+              href="/#newsletter"
+              className="subscribe-button inline-flex items-center rounded-full bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-md transition hover:bg-amber-600"
+            >
+              {t('header.subscribe')}
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}

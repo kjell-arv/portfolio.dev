@@ -2,7 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --header-h: 3.125rem;
+  --header-h-lg: 5rem;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + var(--safe-top) + 0.75rem);
+}
+
+@media (min-width: 1025px) {
+  html {
+    scroll-padding-top: calc(var(--header-h-lg) + 0.75rem);
+  }
+}
+
 body {
-    opacity: 1;
-    transition: opacity 2s ease-in;
+  margin: 0;
+  overflow-x: clip;
+  min-height: 100dvh;
+  min-height: 100vh;
+  padding-bottom: var(--safe-bottom);
+  @apply bg-surface font-sans text-ink antialiased;
+  background-image:
+    radial-gradient(ellipse 100% 60% at 50% -15%, rgb(254 243 199 / 0.65), transparent 50%),
+    radial-gradient(ellipse 60% 45% at 100% 30%, rgb(253 230 138 / 0.2), transparent 45%),
+    radial-gradient(ellipse 50% 40% at 0% 70%, rgb(254 202 202 / 0.08), transparent 42%);
+  background-attachment: scroll;
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-attachment: fixed;
+  }
+}
+
+#root {
+  min-width: 0;
+  max-width: 100vw;
+}
+
+@layer components {
+  .section-inner {
+    @apply mx-auto w-full max-w-6xl min-w-0 px-4 sm:px-6 lg:px-8;
+  }
+
+  .card-surface {
+    @apply rounded-2xl border border-neutral-200/80 bg-white/90 shadow-card backdrop-blur-sm transition-shadow duration-300;
+  }
+
+  .card-surface:hover {
+    @apply shadow-lift border-amber-200/40;
+  }
+
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.22em] text-amber-800/90;
+  }
+
+  .heading-display {
+    @apply font-display font-bold tracking-tight text-ink;
+  }
+}
+
+@layer utilities {
+  .text-gradient-brand {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #0f172a 0%, #92400e 42%, #d97706 100%);
+  }
 }
